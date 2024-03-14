@@ -1,5 +1,5 @@
 /*
- * Created by JFormDesigner on Mon Mar 11 09:34:28 EDT 2024
+ * Created by JFormDesigner on Wed Mar 13 23:36:21 EDT 2024
  */
 
 package org.example;
@@ -7,26 +7,23 @@ package org.example;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import javax.swing.*;
 
 /**
  * @author Valery Chumakou
  */
-public class Registration extends JFrame {
-    public Registration() {
+public class Existing_User extends JFrame {
+    public Existing_User() {
         initComponents();
-        addUser();
     }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         // Generated using JFormDesigner Educational license - Valery Chumakou
         panel1 = new JPanel();
-        label1 = new JLabel();
         label2 = new JLabel();
+        label3 = new JLabel();
         textField1 = new JTextField();
         passwordField1 = new JPasswordField();
         button1 = new JButton();
@@ -39,24 +36,24 @@ public class Registration extends JFrame {
         {
             panel1.setLayout(null);
 
-            //---- label1 ----
-            label1.setText("Username");
-            label1.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
-            panel1.add(label1);
-            label1.setBounds(new Rectangle(new Point(45, 40), label1.getPreferredSize()));
-
             //---- label2 ----
-            label2.setText("Password");
+            label2.setText("Username");
             label2.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
             panel1.add(label2);
-            label2.setBounds(45, 75, 61, 17);
+            label2.setBounds(new Rectangle(new Point(45, 40), label2.getPreferredSize()));
+
+            //---- label3 ----
+            label3.setText("Password");
+            label3.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
+            panel1.add(label3);
+            label3.setBounds(45, 75, 61, 17);
             panel1.add(textField1);
             textField1.setBounds(140, 35, 114, textField1.getPreferredSize().height);
             panel1.add(passwordField1);
             passwordField1.setBounds(140, 75, 115, passwordField1.getPreferredSize().height);
 
             //---- button1 ----
-            button1.setText("Add User");
+            button1.setText("Log In");
             button1.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
             panel1.add(button1);
             button1.setBounds(new Rectangle(new Point(130, 130), button1.getPreferredSize()));
@@ -96,49 +93,57 @@ public class Registration extends JFrame {
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = textField1.getText();
+                String password = new String(passwordField1.getPassword());
+                Existing_User user = logIn(name, password);
+
+            }
+        });
     }
+
+        public Existing_User logIn(String name, String password) {
+            Existing_User user = null;
+            try {
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql",
+                        "root", "BostonVenyaGlobe9357");
+                String sql = "SELECT * FROM users WHERE name=? AND password=?";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setString(1, name);
+                ps.setString(2, password);
+                ResultSet resultSet = ps.executeQuery();
+                if (resultSet.next()) {
+                    textField1 = new JTextField();
+                    name = resultSet.getString("name");
+                    password = resultSet.getString("password");
+                    JOptionPane.showMessageDialog(null, "User exist");
+                } else {
+                    JOptionPane.showMessageDialog(null,"Doesn't Exist");
+                }
+                ps.close();
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
+            return user;
+
+        }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     // Generated using JFormDesigner Educational license - Valery Chumakou
     private JPanel panel1;
-    private JLabel label1;
     private JLabel label2;
+    private JLabel label3;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton button1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 
-    public void addUser() {
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql", "root", "BostonVenyaGlobe9357");
-                    String sql = "INSERT INTO users (name, password) VALUES(?,?)";
-                    PreparedStatement ps = con.prepareStatement(sql);
-                    String user_name = textField1.getText();
-                    String password_field = new String(passwordField1.getPassword());
-                    ps.setString(1, user_name);
-                    ps.setString(2, password_field);
-                    ps.executeUpdate();
-                    int result = ps.executeUpdate();
 
-                    if (result == 1) {
-                        JOptionPane.showMessageDialog(null, "Successfully added");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Failed to add user");
-                    }
-                    con.close();
-                } catch (Exception exception) {
-                    exception.printStackTrace();
 
-                }
-
-            }
-
-        });
-        
-
-    }
 
 }
