@@ -17,8 +17,7 @@ public class Pop_up {
             Registration registration = new Registration();
             registration.show();
 
-        }
-        else {
+        } else {
             Existing_User existingUser = new Existing_User();
             existingUser.show();
 

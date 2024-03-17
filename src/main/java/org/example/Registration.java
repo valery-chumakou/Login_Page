@@ -15,6 +15,7 @@ public class Registration extends JFrame {
     public Registration() {
         initComponents();
         addUser(passwordField1, textField1);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void initComponents() {
@@ -25,10 +26,9 @@ public class Registration extends JFrame {
         textField1 = new JTextField();
         passwordField1 = new JPasswordField();
         button1 = new JButton();
-
-        //======== this ========
         var contentPane = getContentPane();
         contentPane.setLayout(null);
+
 
         //======== panel1 ========
         {
@@ -59,7 +59,7 @@ public class Registration extends JFrame {
             {
                 // compute preferred size
                 Dimension preferredSize = new Dimension();
-                for(int i = 0; i < panel1.getComponentCount(); i++) {
+                for (int i = 0; i < panel1.getComponentCount(); i++) {
                     Rectangle bounds = panel1.getComponent(i).getBounds();
                     preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
                     preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
@@ -77,7 +77,7 @@ public class Registration extends JFrame {
         {
             // compute preferred size
             Dimension preferredSize = new Dimension();
-            for(int i = 0; i < contentPane.getComponentCount(); i++) {
+            for (int i = 0; i < contentPane.getComponentCount(); i++) {
                 Rectangle bounds = contentPane.getComponent(i).getBounds();
                 preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
                 preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
@@ -116,8 +116,8 @@ public class Registration extends JFrame {
 
                     ps.setString(1, user_name);
                     ps.setString(2, hashedPassword);
-                    ps.executeUpdate();
                     int result = ps.executeUpdate();
+
                     if (result == 1) {
                         JOptionPane.showMessageDialog(null, "Successfully added");
                     } else {
@@ -132,31 +132,25 @@ public class Registration extends JFrame {
         });
     }
 
-            /*-----Method to encrypt user's password---*/
-            public String hashPass (String password_field) {
-                try {
-                    MessageDigest md = MessageDigest.getInstance("MD5");
-                    md.update(password_field.getBytes());
-                    byte[] rbt = md.digest();
-                    StringBuilder sb = new StringBuilder();
+    /*-----Method to encrypt user's password---*/
+    public String hashPass(String password_field) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(password_field.getBytes());
+            byte[] rbt = md.digest();
+            StringBuilder sb = new StringBuilder();
 
-                    for (byte b : rbt) {
-                        sb.append(String.format("%02x", b));
-                    }
-                    return sb.toString();
-
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+            for (byte b : rbt) {
+                sb.append(String.format("%02x", b));
             }
-            /*-----Method to encrypt user's password---*/
+            return sb.toString();
 
-
-
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
         }
-
-
+    }
+}
 
 
 
