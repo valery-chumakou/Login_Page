@@ -16,10 +16,12 @@ public class Pop_up {
         if (choices == 0) {
             Registration registration = new Registration();
             registration.show();
+
         }
         else {
             Existing_User existingUser = new Existing_User();
             existingUser.show();
+
         }
     }
 }

@@ -1,29 +1,24 @@
-/*
- * Created by JFormDesigner on Mon Mar 11 09:34:28 EDT 2024
- */
-
 package org.example;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import javax.swing.*;
 
-/**
- * @author Valery Chumakou
- */
+
 public class Registration extends JFrame {
     public Registration() {
         initComponents();
-        addUser();
+        addUser(passwordField1, textField1);
     }
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        // Generated using JFormDesigner Educational license - Valery Chumakou
+        // Component initialization
         panel1 = new JPanel();
         label1 = new JLabel();
         label2 = new JLabel();
@@ -95,20 +90,19 @@ public class Registration extends JFrame {
         }
         pack();
         setLocationRelativeTo(getOwner());
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+        // End of component initialization
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    // Generated using JFormDesigner Educational license - Valery Chumakou
+    // Beginning of Variables declaration
     private JPanel panel1;
     private JLabel label1;
     private JLabel label2;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton button1;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
+    // End of variables declaration
 
-    public void addUser() {
+    public void addUser(JPasswordField passwordField, JTextField textField) {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -118,11 +112,12 @@ public class Registration extends JFrame {
                     PreparedStatement ps = con.prepareStatement(sql);
                     String user_name = textField1.getText();
                     String password_field = new String(passwordField1.getPassword());
+                    String hashedPassword = hashPass(password_field);
+
                     ps.setString(1, user_name);
-                    ps.setString(2, password_field);
+                    ps.setString(2, hashedPassword);
                     ps.executeUpdate();
                     int result = ps.executeUpdate();
-
                     if (result == 1) {
                         JOptionPane.showMessageDialog(null, "Successfully added");
                     } else {
@@ -133,12 +128,36 @@ public class Registration extends JFrame {
                     exception.printStackTrace();
 
                 }
-
             }
-
         });
-        
-
     }
 
-}
+            /*-----Method to encrypt user's password---*/
+            public String hashPass (String password_field) {
+                try {
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    md.update(password_field.getBytes());
+                    byte[] rbt = md.digest();
+                    StringBuilder sb = new StringBuilder();
+
+                    for (byte b : rbt) {
+                        sb.append(String.format("%02x", b));
+                    }
+                    return sb.toString();
+
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            /*-----Method to encrypt user's password---*/
+
+
+
+        }
+
+
+
+
+
+
